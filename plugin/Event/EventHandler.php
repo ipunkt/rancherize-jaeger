@@ -36,7 +36,9 @@ class EventHandler {
 			return;
 
 		$jaegerService = new Service();
-		$jaegerService->setName( 'Jaeger' );
+		$jaegerService->setName( function() use ($mainService) {
+		    return 'JaegerAgent-'.$mainService->getName();
+		});
 		$jaegerService->setImage( $jaegerConfig->getImage() );
 		$jaegerService->setNetworkMode( new ShareNetworkMode($mainService) );
 
