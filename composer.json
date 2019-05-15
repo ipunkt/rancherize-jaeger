@@ -1,0 +1,25 @@
+{
+  "name": "ipunkt/rancherize-jaeger",
+  "description": "Rancherize plugin to add a jaeger-agent sidekick",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Sven Speckmaier",
+      "email": "sps@ipunkt.biz"
+    }
+  ],
+  "autoload":{
+    "psr-4": {
+      "RancherizeJaeger\\": "plugin/"
+    }
+  },
+
+  "require": {},
+  "require-dev": {
+    "ipunkt/rancherize": "^2.40.1"
+  },
+  "extra":{
+    "rancherize-provider":"RancherizeJaeger\\JaegerProvider"
+  }
+}
