@@ -1,8 +1,8 @@
 <?php namespace RancherizeJaeger\Event;
 
 use Rancherize\Blueprint\Events\MainServiceBuiltEvent;
-use Rancherize\Blueprint\Infrastructure\Service\NetworkMode\ShareNetworkMode;
-use Rancherize\Blueprint\Infrastructure\Service\Service;
+use Rancherize\Blueprint\Events\ServiceBuiltEvent;
+use RancherizeJaeger\Builder\Builder;
 use RancherizeJaeger\Parser\ConfigParser;
 
 /**
@@ -10,50 +10,42 @@ use RancherizeJaeger\Parser\ConfigParser;
  * @package RancherizeMailhog\Event
  */
 class EventHandler {
-	/**
-	 * @var ConfigParser
-	 */
-	private $configParser;
+    /**
+     * @var Builder
+     */
+    private $builder;
 
-	/**
-	 * EventHandler constructor.
-	 * @param ConfigParser $configParser
-	 */
-	public function __construct( ConfigParser $configParser ) {
-		$this->configParser = $configParser;
-	}
+    /**
+     * EventHandler constructor.
+     * @param ConfigParser $configParser
+     * @param Builder $builder
+     */
+	public function __construct(  Builder $builder ) {
+        $this->builder = $builder;
+    }
 
 	/**
 	 * @param MainServiceBuiltEvent $event
 	 */
 	public function built( MainServiceBuiltEvent $event ) {
-
-		$mainService = $event->getMainService();
-		$configuration = $event->getEnvironmentConfiguration();
-
-		$jaegerConfig = $this->configParser->parse( $configuration );
-		if ( !$jaegerConfig->isEnabled() )
-			return;
-
-		$jaegerService = new Service();
-		$jaegerService->setName( function() use ($mainService) {
-		    return 'JaegerAgent-'.$mainService->getName();
-		});
-		$jaegerService->setImage( $jaegerConfig->getImage() );
-		$jaegerService->setNetworkMode( new ShareNetworkMode($mainService) );
-
-		switch($jaegerConfig->getJaegerMethod()) {
-            case 'grpc':
-                $jaegerService->setCommand('--reporter.grpc.host-port='.$jaegerConfig->getJaegerHost());
-                break;
-        }
-
-		$mainService->setEnvironmentVariable( 'JAEGER_AGENT_HOST', 'localhost' );
-		$mainService->setEnvironmentVariable( 'JAEGER_AGENT_PORT', '6831' );
-		$mainService->addSidekick($jaegerService);
-
-		$event->getInfrastructure()->addService( $jaegerService );
-
+        $this->builder
+            ->setTargetService($event->getMainService())
+            ->setEnvironmentConfig($event->getEnvironmentConfiguration())
+            ->build();
 
 	}
+
+    /**
+     * @param MainServiceBuiltEvent $event
+     */
+    public function serviceBuilt( ServiceBuiltEvent $event ) {
+
+        $this->builder
+            ->setTargetService($event->getService())
+            ->setEnvironmentConfig($event->getEnvironmentConfiguration())
+            ->build();
+
+
+    }
+
 }

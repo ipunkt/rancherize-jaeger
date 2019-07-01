@@ -1,8 +1,10 @@
 <?php namespace RancherizeJaeger;
 
 use Rancherize\Blueprint\Events\MainServiceBuiltEvent;
+use Rancherize\Blueprint\Events\ServiceBuiltEvent;
 use Rancherize\Plugin\Provider;
 use Rancherize\Plugin\ProviderTrait;
+use RancherizeJaeger\Builder\Builder;
 use RancherizeJaeger\Event\EventHandler;
 use RancherizeJaeger\Parser\ConfigParser;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -23,7 +25,11 @@ class JaegerProvider implements Provider
         };
 
         $this->container[EventHandler::class] = function ( $c ) {
-            return new EventHandler( $c[ConfigParser::class] );
+            return new EventHandler( $c[Builder::class] );
+        };
+
+        $this->container[Builder::class] = function ( $c ) {
+            return new Builder( $c[ConfigParser::class] );
         };
     }
 
@@ -37,5 +43,6 @@ class JaegerProvider implements Provider
         $dispatcher = $this->container['event'];
         $listener = $this->container[EventHandler::class];
         $dispatcher->addListener( MainServiceBuiltEvent::NAME, [$listener, 'built'] );
+        $dispatcher->addListener( ServiceBuiltEvent::NAME, [$listener, 'serviceBuilt'] );
     }
 }
