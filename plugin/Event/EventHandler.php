@@ -43,7 +43,7 @@ class EventHandler {
 
         $this->builder
             ->setTargetService($event->getService())
-            ->setEnvironmentConfig($event->getEnvironmentConfiguration())
+            ->setEnvironmentConfig($event->getConfiguration())
             ->setInfrastructure($event->getInfrastructure())
             ->build();
 
