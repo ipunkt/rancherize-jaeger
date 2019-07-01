@@ -17,7 +17,7 @@
 
   "require": {},
   "require-dev": {
-    "ipunkt/rancherize": "^2.40.1"
+    "ipunkt/rancherize": "^2.45.0"
   },
   "extra":{
     "rancherize-provider":"RancherizeJaeger\\JaegerProvider"
