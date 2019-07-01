@@ -2,6 +2,7 @@
 
 use Rancherize\Blueprint\Events\MainServiceBuiltEvent;
 use Rancherize\Blueprint\Events\ServiceBuiltEvent;
+use Rancherize\Configuration\Services\ConfigurationFallback;
 use RancherizeJaeger\Builder\Builder;
 use RancherizeJaeger\Parser\ConfigParser;
 
@@ -41,9 +42,11 @@ class EventHandler {
      */
     public function serviceBuilt( ServiceBuiltEvent $event ) {
 
+        $fallbackConfiguration = new ConfigurationFallback($event->getConfiguration(), $event->getEnvironmentConfiguration());
+
         $this->builder
             ->setTargetService($event->getService())
-            ->setEnvironmentConfig($event->getConfiguration())
+            ->setEnvironmentConfig($fallbackConfiguration)
             ->setInfrastructure($event->getInfrastructure())
             ->build();
 
