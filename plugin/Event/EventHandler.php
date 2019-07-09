@@ -42,6 +42,9 @@ class EventHandler {
      */
     public function serviceBuilt( ServiceBuiltEvent $event ) {
 
+        if( !$event->getConfiguration()->has('jaeger') )
+            return;
+
         $fallbackConfiguration = new ConfigurationFallback($event->getConfiguration(), $event->getEnvironmentConfiguration());
 
         $this->builder
