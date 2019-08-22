@@ -21,7 +21,7 @@ class JaegerConfig {
      */
 	protected $jaegerHost = 'jaeger:14250';
 
-	protected $image = 'jaegertracing/jaeger-agent:1.11';
+	protected $image = 'jaegertracing/jaeger-agent:1.13.1';
 
 	/**
 	 * @return bool
