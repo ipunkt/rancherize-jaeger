@@ -50,7 +50,7 @@ class Builder
         $jaegerService = new Service();
         $targetService = $this->targetService;
         $jaegerService->setName(function () use ($targetService) {
-            return 'JaegerAgent-' . $targetService->getName();
+            return 'Jag-' . $targetService->getName();
         });
         $jaegerService->setImage($jaegerConfig->getImage());
         $jaegerService->setNetworkMode(new ShareNetworkMode($this->targetService));
